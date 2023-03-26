@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         中文 ptcg 牌組編輯強化
-// @namespace    https://github.com/douduck08
+// @namespace    https://github.com/douduck08/enhance-tw-ptcg-builder
 // @version      1.1
 // @description  強化繁體中文 ptcg 官網牌組編輯功能
 // @author       douduck08 (https://www.douduck08.com/)
