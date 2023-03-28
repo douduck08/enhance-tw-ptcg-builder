@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         中文 ptcg 牌組編輯強化
 // @namespace    https://github.com/douduck08/enhance-tw-ptcg-builder
-// @version      1.1
+// @version      1.1.1
 // @description  強化繁體中文 ptcg 官網牌組編輯功能
 // @author       douduck08 (https://www.douduck08.com/)
 // @license      MIT
@@ -127,9 +127,22 @@ div.play-deckMenu {
     width: 186px;
     height: 404px;
 }
-button.play-deckMenuButton {
-    width: 100%;
+button.play-deckMenuButton1 {
+    width: -webkit-fill-available;
     height: 40px;
+    border: 1px solid #dedede;
+    border-radius: 10px;
+    background-color: #efefef;
+    margin: 2px;
+}
+button.play-deckMenuButton2 {
+    width: -webkit-fill-available;
+    height: 40px;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    background-color: #000000;
+    color: #ffffff;
+    margin: 2px;
 }
 
 div.play-cards {
@@ -138,6 +151,7 @@ div.play-cards {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-content: flex-start;
 }
 div.play-card > img {
     width: 76px;
@@ -149,10 +163,12 @@ div.play-card {
 }
 div.deck-cards {
     justify-content: left;
-    align-self: center;
     overflow-y: scroll;
 }
 
+div.prize-cards {
+    justify-content: left;
+}
 div.prize-cards > div {
     border: 1px solid #dedede;
     background-color: #efefef;
@@ -175,10 +191,11 @@ div.stack-cards > div:nth-of-type(4n) {
     margin-left: -48px;
 }
 div.stack-cards > div:nth-of-type(n+4) ~ div {
-    margin-top: -84px;
+    margin-top: -75px;
 }
+
 div.view-cards  > div:nth-of-type(n+4) ~ div {
-    margin-top: -84px;
+    margin-top: -75px;
 }
 
 div.discard-cards > div:nth-of-type(10n+1) {
@@ -212,7 +229,7 @@ div.discard-cards > div:nth-of-type(10n) {
     margin-left: -48px;
 }
 div.discard-cards  > div:nth-of-type(n+10) ~ div {
-    margin-top: -84px;
+    margin-top: -75px;
 }
 `;
 
@@ -313,14 +330,14 @@ const toolkitDom = `
         <div class="ex-cardZone play-deckMenu">
             <h3>牌庫選單</h3>
             <div id="deckMenu-1">
-                <button type="button" id="deckMenu-open" class="play-deckMenuButton">查看牌庫</button>
-                <button type="button" id="deckMenu-drawOne" class="play-deckMenuButton">抽一張牌</button>
-                <button type="button" id="deckMenu-viewOne" class="play-deckMenuButton">查看一張牌</button>
-                <button type="button" id="deckMenu-shuffle" class="play-deckMenuButton">重洗牌庫</button>
+                <button type="button" id="deckMenu-open" class="play-deckMenuButton1">查看牌庫</button>
+                <button type="button" id="deckMenu-shuffle" class="play-deckMenuButton1">重洗牌庫</button>
+                <button type="button" id="deckMenu-viewOne" class="play-deckMenuButton1">查看一張牌</button>
+                <button type="button" id="deckMenu-drawOne" class="play-deckMenuButton2">抽一張牌</button>
             </div>
             <div id="deckMenu-2">
-                <button type="button" id="deckMenu-close" class="play-deckMenuButton">關閉並重洗</button>
-                <button type="button" id="deckMenu-sort" class="play-deckMenuButton">排序</button>
+                <button type="button" id="deckMenu-close" class="play-deckMenuButton1">關閉並重洗</button>
+                <button type="button" id="deckMenu-sort" class="play-deckMenuButton1">排序</button>
             </div>
         </div>
     </div>
