@@ -60,6 +60,7 @@ button.close-button {
 div.ex-cardZone {
     border: 1px dashed #707070;
     border-radius: 6px;
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
     padding: 4px;
@@ -69,6 +70,9 @@ div.ex-cardZone > h3 {
     font-size: 1rem;
     text-align: center;
     background-color: #efefef;
+}
+div.ex-cardZone > h3:hover {
+    background-color: #adadad;
 }
 div.ex-cards {
     width: 100%;
@@ -127,22 +131,49 @@ div.play-deckMenu {
     width: 186px;
     height: 404px;
 }
-button.play-deckMenuButton1 {
+
+button.play-menuButton1 {
     width: -webkit-fill-available;
-    height: 40px;
-    border: 1px solid #dedede;
-    border-radius: 10px;
-    background-color: #efefef;
-    margin: 2px;
-}
-button.play-deckMenuButton2 {
-    width: -webkit-fill-available;
-    height: 40px;
+    height: 32px;
     border: 1px solid #000000;
     border-radius: 10px;
     background-color: #000000;
     color: #ffffff;
     margin: 2px;
+}
+button.play-menuButton2 {
+    width: -webkit-fill-available;
+    height: 32px;
+    border: 1px solid #adadad;
+    border-radius: 10px;
+    background-color: #efefef;
+    margin: 2px;
+}
+button.play-menuButton3 {
+    width: -webkit-fill-available;
+    height: 32px;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    background-color: #ffffff;
+    margin: 2px;
+}
+
+div.overlay {
+    z-index: 100;
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+div.play-zoneMenu {
+    z-index: 200;
+    position: fixed;
+    width: 186px;
+    height: auto;
+    background-color: #4b4b4b;
 }
 
 div.play-cards {
@@ -275,7 +306,7 @@ const toolkitDom = `
             <h3>牌庫</h3>
             <div id="play-deck" class="play-cards deck-cards"></div>
         </div>
-        <div id="play-battleZone-1" class="toolkit-flexWrapper">
+        <div id="play-zoneRow1" class="toolkit-flexWrapper">
             <div class="ex-cardZone play-cardZone">
                 <h3>放逐區</h3>
                 <div id="play-lost" class="play-cards stack-cards"></div>
@@ -293,7 +324,7 @@ const toolkitDom = `
                 <div id="play-view" class="play-cards view-cards"></div>
             </div>
         </div>
-        <div id="play-battleZone-2" class="toolkit-flexWrapper">
+        <div id="play-zoneRow2" class="toolkit-flexWrapper">
             <div class="ex-cardZone play-cardZone">
                 <h3>備戰區A</h3>
                 <div id="play-bench-a" class="play-cards stack-cards"></div>
@@ -328,21 +359,34 @@ const toolkitDom = `
     </div>
     <div>
         <div class="ex-cardZone play-deckMenu">
-            <h3>牌庫選單</h3>
+            <h3>牌庫</h3>
             <div id="deckMenu-1">
-                <button type="button" id="deckMenu-open" class="play-deckMenuButton1">查看牌庫</button>
-                <button type="button" id="deckMenu-shuffle" class="play-deckMenuButton1">重洗牌庫</button>
-                <button type="button" id="deckMenu-viewOne" class="play-deckMenuButton1">查看一張牌</button>
-                <button type="button" id="deckMenu-drawOne" class="play-deckMenuButton2">抽一張牌</button>
+                <button type="button" id="deckMenu-open" class="play-menuButton2">查看牌庫</button>
+                <button type="button" id="deckMenu-shuffle" class="play-menuButton2">重洗牌庫</button>
+                <button type="button" id="deckMenu-viewOne" class="play-menuButton2">查看一張牌</button>
+                <button type="button" id="deckMenu-drawOne" class="play-menuButton1">抽一張牌</button>
             </div>
             <div id="deckMenu-2">
-                <button type="button" id="deckMenu-close" class="play-deckMenuButton1">關閉並重洗</button>
-                <button type="button" id="deckMenu-sort" class="play-deckMenuButton1">排序</button>
+                <button type="button" id="deckMenu-close" class="play-menuButton2">關閉並重洗</button>
+                <button type="button" id="deckMenu-sort" class="play-menuButton2">排序</button>
             </div>
         </div>
     </div>
     <div>
         <button type="button" id="testPlayClose" class="button secondary close-button">X</button>
+    </div>
+    <div id="zoneMenuContainer">
+        <div id="zoneMenu-overlay" class="overlay"></div>
+        <div id="zoneMenu" class="ex-cardZone play-zoneMenu" data-id=''>
+            <button type="button" id="zoneMenu-toBattle" class="play-menuButton3">移至對戰區</button>
+            <button type="button" id="zoneMenu-viewPrize" class="play-menuButton3">查看獎賞卡</button>
+            <button type="button" id="zoneMenu-toDiscard" class="play-menuButton3">放入棄牌區</button>
+            <button type="button" id="zoneMenu-toHand" class="play-menuButton3">放入手牌</button>
+            <button type="button" id="zoneMenu-toDeck" class="play-menuButton3">放入牌庫並重洗</button>
+            <button type="button" id="zoneMenu-toDeckTop" class="play-menuButton3">重洗並放到牌庫上方</button>
+            <button type="button" id="zoneMenu-toDeckBottom" class="play-menuButton3">重洗並放到牌庫下方</button>
+            <button type="button" id="zoneMenu-toPrize" class="play-menuButton3">放入獎賞卡並重洗</button>
+        </div>
     </div>
 </div>
 `;
@@ -446,16 +490,16 @@ function setupPlayCards() {
 
 function openPlayDeck() {
     $('#play-deckZone').show();
-    $('#play-battleZone-1').hide();
-    $('#play-battleZone-2').hide();
+    $('#play-zoneRow1').hide();
+    $('#play-zoneRow2').hide();
     $('#deckMenu-1').hide();
     $('#deckMenu-2').show();
 }
 
 function closePlayDeck() {
     $('#play-deckZone').hide();
-    $('#play-battleZone-1').show();
-    $('#play-battleZone-2').show();
+    $('#play-zoneRow1').show();
+    $('#play-zoneRow2').show();
     $('#deckMenu-1').show();
     $('#deckMenu-2').hide();
 }
@@ -478,12 +522,86 @@ function shufflePlayDeck() {
     parent.append(items);
 }
 
+function openZoneMenu(cardListId) {
+    if (cardListId === 'play-deck' || cardListId === 'play-lost') { return; }
+
+    let parent = $('#' + cardListId).parent();
+    parent.css('z-index', 1000);
+    $('#zoneMenu').css({
+        top: parent.position().top,
+        left: parent.position().left + parent.width() + 14
+    });
+    $('#zoneMenuContainer').show();
+    $('#zoneMenu').data('id', cardListId);
+
+    $('#zoneMenu-toBattle').hide();
+    $('#zoneMenu-viewPrize').hide();
+    $('#zoneMenu-toDiscard').hide();
+    $('#zoneMenu-toHand').hide();
+    $('#zoneMenu-toDeck').hide();
+    $('#zoneMenu-toDeckTop').hide();
+    $('#zoneMenu-toDeckBottom').hide();
+    $('#zoneMenu-toPrize').hide();
+
+    if (cardListId === 'play-prize') {
+        $('#zoneMenu-viewPrize').show();
+    }
+    else if (cardListId === 'play-stadium') {
+        $('#zoneMenu-toDiscard').show();
+        $('#zoneMenu-toHand').show();
+        $('#zoneMenu-toDeck').show();
+        $('#zoneMenu-toDeckTop').show();
+        $('#zoneMenu-toDeckBottom').show();
+    }
+    else if (cardListId === 'play-active') {
+        $('#zoneMenu-toDiscard').show();
+        $('#zoneMenu-toHand').show();
+        $('#zoneMenu-toDeck').show();
+        $('#zoneMenu-toDeckTop').show();
+        $('#zoneMenu-toDeckBottom').show();
+    }
+    else if (cardListId === 'play-view') {
+        $('#zoneMenu-toDiscard').show();
+        $('#zoneMenu-toHand').show();
+        $('#zoneMenu-toDeck').show();
+        $('#zoneMenu-toDeckTop').show();
+        $('#zoneMenu-toDeckBottom').show();
+        $('#zoneMenu-toPrize').show();
+    }
+    else if (cardListId === 'play-hand') {
+        $('#zoneMenu-toDiscard').show();
+        $('#zoneMenu-toDeck').show();
+        $('#zoneMenu-toDeckTop').show();
+        $('#zoneMenu-toDeckBottom').show();
+    }
+    else if (cardListId === 'play-discard') {
+        $('#zoneMenu-toDeck').show();
+        $('#zoneMenu-toDeckTop').show();
+        $('#zoneMenu-toDeckBottom').show();
+    }
+    else { // bench
+        $('#zoneMenu-toBattle').show();
+        $('#zoneMenu-toDiscard').show();
+        $('#zoneMenu-toHand').show();
+        $('#zoneMenu-toDeck').show();
+        $('#zoneMenu-toDeckTop').show();
+        $('#zoneMenu-toDeckBottom').show();
+    }
+}
+
+function closeZoneMenu() {
+    let cardListId = $('#zoneMenu').data('id');
+    $('#' + cardListId).parent().removeAttr("style");
+    $('#zoneMenuContainer').hide();
+}
+
 $(document).ready(function () {
     let styleSheet = $('<style>').text(styles);
     $('head').append(styleSheet);
     $('body > main').prepend(toolkitDom);
     $('#testStartupZone').hide();
     $('#testPlayZone').hide();
+    $('#zoneMenuContainer').hide();
 
     // Adjust search result zone width
     $('#reduceColumn').click(function () {
@@ -558,11 +676,19 @@ $(document).ready(function () {
         shufflePlayDeck();
     });
 
-    // Setup sortable list for test play
     for (let i = 0; i < playCardListIds.length; i++) {
+        // Setup sortable list for test play
         Sortable.create(document.getElementById(playCardListIds[i]), {
             group: 'play-cards',
             animation: 150
         });
+        // Setup zone menu click event
+        $('h3', $('#' + playCardListIds[i]).parent()).click(function () {
+            let cardListId = $('div', $(this).parent())[0].id;
+            openZoneMenu(cardListId);
+        });
     }
+    $('#zoneMenu-overlay').click(function () {
+        closeZoneMenu();
+    });
 });
