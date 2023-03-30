@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         中文 ptcg 牌組編輯強化
 // @namespace    https://github.com/douduck08/enhance-tw-ptcg-builder
-// @version      1.1.1
+// @version      1.2.0
 // @description  強化繁體中文 ptcg 官網牌組編輯功能
 // @author       douduck08 (https://www.douduck08.com/)
 // @license      MIT
@@ -488,6 +488,38 @@ function setupPlayCards() {
     }
 }
 
+function sortCards(selector) {
+    let parent = $(selector);
+    let items = parent.children().sort(function (a, b) {
+        let a_index = $(a).data('index');
+        let b_index = $(b).data('index');
+        return a_index > b_index ? 1 : -1;
+    });
+    parent.append(items);
+}
+
+function shuffleCards(selector) {
+    let parent = $(selector);
+    let items = parent.children().sort(function () {
+        return (Math.round(Math.random()) - 0.5);
+    });
+    parent.append(items);
+}
+
+function appendCardsTo(fromSelector, toSelector) {
+    $(fromSelector).children().appendTo(toSelector);
+}
+
+function prependCardsTo(fromSelector, toSelector) {
+    $(fromSelector).children().prependTo(toSelector);
+}
+
+function swapCards(aSelector, bSelector) {
+    let items = $(aSelector).children().detach();
+    $(bSelector).children().appendTo(aSelector);
+    items.appendTo(bSelector);
+}
+
 function openPlayDeck() {
     $('#play-deckZone').show();
     $('#play-zoneRow1').hide();
@@ -502,24 +534,6 @@ function closePlayDeck() {
     $('#play-zoneRow2').show();
     $('#deckMenu-1').show();
     $('#deckMenu-2').hide();
-}
-
-function sortPlayDeck() {
-    let parent = $('#play-deck');
-    let items = parent.children().sort(function (a, b) {
-        let a_index = $(a).data('index');
-        let b_index = $(b).data('index');
-        return a_index > b_index ? 1 : -1;
-    });
-    parent.append(items);
-}
-
-function shufflePlayDeck() {
-    let parent = $('#play-deck');
-    let items = parent.children().sort(function () {
-        return (Math.round(Math.random()) - 0.5);
-    });
-    parent.append(items);
 }
 
 function openZoneMenu(cardListId) {
@@ -655,13 +669,13 @@ $(document).ready(function () {
         $('#testPlayZone').hide();
     });
 
-    // Dech menu buttons in test play
+    // Deck menu buttons in test play
     $('#deckMenu-open').click(function () {
         openPlayDeck();
     });
     $('#deckMenu-close').click(function () {
         closePlayDeck();
-        shufflePlayDeck();
+        shuffleCards('#play-deck');
     });
     $('#deckMenu-drawOne').click(function () {
         $('#play-deck').children().first().detach().appendTo("#play-hand");
@@ -670,10 +684,10 @@ $(document).ready(function () {
         $('#play-deck').children().first().detach().appendTo("#play-view");
     });
     $('#deckMenu-sort').click(function () {
-        sortPlayDeck();
+        sortCards('#play-deck');
     });
     $('#deckMenu-shuffle').click(function () {
-        shufflePlayDeck();
+        shuffleCards('#play-deck');
     });
 
     for (let i = 0; i < playCardListIds.length; i++) {
@@ -688,7 +702,55 @@ $(document).ready(function () {
             openZoneMenu(cardListId);
         });
     }
+
+    // Close zone menu
     $('#zoneMenu-overlay').click(function () {
+        closeZoneMenu();
+    });
+
+    // Zone menu buttons
+    $('#zoneMenu-toBattle').click(function () {
+        let cardListId = $('#zoneMenu').data('id');
+        swapCards('#' + cardListId, '#play-active');
+        closeZoneMenu();
+    });
+    $('#zoneMenu-viewPrize').click(function () {
+        let cardListId = $('#zoneMenu').data('id');
+        appendCardsTo('#' + cardListId, '#play-view');
+        closeZoneMenu();
+    });
+    $('#zoneMenu-toDiscard').click(function () {
+        let cardListId = $('#zoneMenu').data('id');
+        appendCardsTo('#' + cardListId, '#play-discard');
+        closeZoneMenu();
+    });
+    $('#zoneMenu-toHand').click(function () {
+        let cardListId = $('#zoneMenu').data('id');
+        appendCardsTo('#' + cardListId, '#play-hand');
+        closeZoneMenu();
+    });
+    $('#zoneMenu-toDeck').click(function () {
+        let cardListId = $('#zoneMenu').data('id');
+        appendCardsTo('#' + cardListId, '#play-deck');
+        shuffleCards('#play-deck');
+        closeZoneMenu();
+    });
+    $('#zoneMenu-toDeckTop').click(function () {
+        let cardListId = $('#zoneMenu').data('id');
+        shuffleCards('#' + cardListId);
+        prependCardsTo('#' + cardListId, '#play-deck');
+        closeZoneMenu();
+    });
+    $('#zoneMenu-toDeckBottom').click(function () {
+        let cardListId = $('#zoneMenu').data('id');
+        shuffleCards('#' + cardListId);
+        appendCardsTo('#' + cardListId, '#play-deck');
+        closeZoneMenu();
+    });
+    $('#zoneMenu-toPrize').click(function () {
+        let cardListId = $('#zoneMenu').data('id');
+        appendCardsTo('#' + cardListId, '#play-prize');
+        shuffleCards('#play-prize');
         closeZoneMenu();
     });
 });
